@@ -1,0 +1,43 @@
+////////////////////////////////////////////
+//Engineer   : DEEPAK RAJ V 
+//Project    : 4x4 Multiplier (Multi4)
+//Type       : Sturctural 
+// Inputs    : a0,a1,a2,a3,b0,b1,b2,b3 
+// Ouputs    : p0,p1,p2,p3,p4,p5,p6,p7
+// Components: Mulipliter (2x2),
+//             Ripple carry adder(rca 4 bit) 
+// Tool      : Altera Quartus 
+////////////////////////////////////////////
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity multi4_stu is
+port(a,b: in bit_vector(3 downto 0); p: out bit_vector(7 downto 0));
+end multi4_stu;
+
+architecture stu of multi4_stu is
+
+component multiplier2_stu
+port (a,b: in bit_vector(1 downto 0); p: out bit_vector(3 downto 0));
+end component;
+
+component rca4_stu is
+port(a,b: in bit_vector(3 downto 0); c0: in bit ; s: out bit_vector(3 downto 0); cout: out bit );
+end component;
+
+signal y1,y2,y3,y4,z1,z2: bit_vector(3 downto 0);
+signal ca: bit_vector(3 downto 1);
+
+begin
+
+u1: multiplier2_stu port map(a(1 downto 0),b(1 downto 0),z1);
+u2: multiplier2_stu port map(a(1 downto 0),b(3 downto 2),y1);
+u3: multiplier2_stu port map(a(3 downto 2),b(1 downto 0),y2);
+u4: multiplier2_stu port map(a(3 downto 2),b(3 downto 2),y3);
+u5: rca4_stu port map(y1,y2,'0',y4,ca(1));
+u6: rca4_stu port map(y4,('0'&'0'&z1(3 downto 2)),'0',z2,ca(2));
+u7: rca4_stu port map(y3,(ca(1)&'0'&z2(3 downto 2)),'0',p(7 downto 4),ca(3));
+p(1 downto 0) <= z1(1 downto 0);
+p(3 downto 2) <= z2(1 downto 0);
+
+end stu;
